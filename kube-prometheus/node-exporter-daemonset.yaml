@@ -41,13 +41,15 @@ spec:
           requests:
             cpu: 102m
             memory: 180Mi
-        #volumeMounts:
-        #- mountPath: /host/sys
-        #  mountPropagation: HostToContainer
-        #  name: sys
-        #- mountPath: /host/root
-        #  mountPropagation: HostToContainer
-        #  name: root
+        volumeMounts:
+        - mountPath: /host/proc
+          #mountPropagation: HostToContainer
+          readOnly:  true
+          name: proc
+        - mountPath: /host/sys
+          #mountPropagation: HostToContainer
+          readOnly:  true
+          name: sys
       - args:
         - --logtostderr
         - --secure-listen-address=[$(IP)]:9100
@@ -85,13 +87,13 @@ spec:
       serviceAccountName: node-exporter
       tolerations:
       - operator: Exists
-      #volumes:
-      #- hostPath:
-      #    path: /tmp
-      #  name: sys
-      #- hostPath:
-      #    path: /opt
-      #  name: root
+      volumes:
+      - hostPath:
+          path: /sys
+        name: sys
+      - hostPath:
+          path: /proc
+        name: proc
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
